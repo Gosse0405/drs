@@ -9,6 +9,17 @@ public class DataReport implements Serializable {
     private double totalAssete;
     private String ownerEquity;
 
+    public DataReport() {
+
+    }
+
+    public DataReport(String id, Date reportDate, double totalAssete, String ownerEquity) {
+        this.id = id;
+        this.reportDate = reportDate;
+        this.totalAssete = totalAssete;
+        this.ownerEquity = ownerEquity;
+    }
+
     public String getId() {
         return id;
     }
