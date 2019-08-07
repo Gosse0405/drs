@@ -1,10 +1,9 @@
 package com.tansun.drs.controller;
 
+import com.tansun.drs.entity.DataReport;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -18,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -43,9 +43,12 @@ public class UploadController {
 		if(!upload.exists()) {
 			upload.mkdirs();
 		}
+		// 文件后缀
+		String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
+		// 新文件名随机UUID
 		String fileName = UUID.randomUUID().toString();
 		// 文件路径
-		String filePath = uploadPath + File.separator + fileName + "." + fileName.substring(fileName.lastIndexOf(".") + 1);;
+		String filePath = uploadPath + File.separator + fileName + "." + suffix;
 		File dest = new File(filePath);
 		try {
 			// 像磁盘中写入文件
@@ -57,24 +60,68 @@ public class UploadController {
 			LOGGER.error("Excel文件上传失败", e.getMessage());
 		}
 
-		// ********************* 读取Excel *********************
-		XSSFWorkbook xssfWorkbook = null;
-		try {
-			// 构造一个XSSFWorkbook对象，将整个流缓冲到内存中
-			xssfWorkbook = new XSSFWorkbook(OPCPackage.open(filePath));
-			// 获取第一个工作簿
-			XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
-			for (int i = 1; i <= xssfSheet.getLastRowNum(); i++) {
-				XSSFRow xssfRow = xssfSheet.getRow(i);
-				int minCell = xssfRow.getFirstCellNum();
-				int maxCell = xssfRow.getLastCellNum();
+		if (suffix.equals("xlsx")) {
+			// ********************* 读取Excel *********************
+			XSSFWorkbook xssfWorkbook = null;
+			try {
+				// 构造一个XSSFWorkbook对象，将整个流缓冲到内存中
+				xssfWorkbook = new XSSFWorkbook(OPCPackage.open(filePath));
+				// 获取第一个工作簿
+				XSSFSheet xssfSheet = xssfWorkbook.getSheetAt(0);
+				for (int i = 1; i <= xssfSheet.getLastRowNum(); i++) {
+					XSSFRow xssfRow = xssfSheet.getRow(i);
+					int minCell = xssfRow.getFirstCellNum();
+					int maxCell = xssfRow.getLastCellNum();
+
+					XSSFCell reportDate = xssfRow.getCell(1);
+					XSSFCell totalAssets = xssfRow.getCell(2);
+					XSSFCell ownerEquity = xssfRow.getCell(3);
+
+					System.out.println(getValue(reportDate));
+
+					DataReport dataReport = new DataReport(
+//						UUID.randomUUID().toString(),
+
+						);
+
+				}
+			} catch (IOException e) {
+				LOGGER.error("IO异常：" + e.getMessage());
+			} catch (InvalidFormatException e) {
+				LOGGER.error("路径不存在异常：" + e.getMessage());
 			}
-		} catch (IOException e) {
-			LOGGER.error("IO异常：" + e.getMessage());
-		} catch (InvalidFormatException e) {
-			LOGGER.error("路径不存在异常：" + e.getMessage());
+		} else {
+
 		}
 
 		return map;
 	}
+
+	private String getValue(XSSFCell xssfRow) {
+		if (xssfRow != null) {
+			XSSFCellStyle cellStyle = xssfRow.getCellStyle();
+
+			switch (xssfRow.getCellType()) {
+				case STRING:
+
+					break;
+				case NUMERIC:
+					System.out.println(cellStyle.getDataFormatString());
+					System.out.println(xssfRow.getDateCellValue());
+					if("yyyy/mm;@".equals(cellStyle.getDataFormatString()) 
+						|| "m/d/yy".equals(cellStyle.getDataFormatString())
+						|| "yy/m/d".equals(cellStyle.getDataFormatString()) 
+						|| "mm/dd/yy".equals(cellStyle.getDataFormatString())
+						|| "dd-mmm-yy".equals(cellStyle.getDataFormatString())
+						|| "yyyy/m/d".equals(cellStyle.getDataFormatString())
+						|| "yyyy\\-mm\\-dd;@".equals(cellStyle.getDataFormatString())){
+						return new SimpleDateFormat("yyyy-MM-dd").format(xssfRow.getDateCellValue());
+					}
+			}
+			return "1";
+		} else {
+			return "0";
+		}
+	}
+
 }
