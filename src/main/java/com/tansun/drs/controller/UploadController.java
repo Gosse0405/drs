@@ -69,7 +69,6 @@ public class UploadController {
 				int minCell = xssfRow.getFirstCellNum();
 				int maxCell = xssfRow.getLastCellNum();
 			}
-			System.out.println("aaaaaa");
 		} catch (IOException e) {
 			LOGGER.error("IO异常：" + e.getMessage());
 		} catch (InvalidFormatException e) {
