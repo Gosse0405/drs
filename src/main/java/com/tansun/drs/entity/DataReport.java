@@ -3,7 +3,7 @@ package com.tansun.drs.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class dataReport implements Serializable {
+public class DataReport implements Serializable {
     private String id;
     private Date reportDate;
     private double totalAssete;
