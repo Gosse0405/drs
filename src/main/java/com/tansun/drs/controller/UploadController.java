@@ -29,6 +29,15 @@ public class UploadController {
 	public Object uploadFile(@RequestParam("file") MultipartFile file) throws FileNotFoundException {
 		Map<String, Object> map = new HashMap<String, Object>();
 
+
+
+
+
+
+
+
+
+		// ********************* 文件写入 *********************
 		// 资源路径
 		File resPath = new File(ResourceUtils.getURL("classpath:").getPath());
 		// 上传路径
