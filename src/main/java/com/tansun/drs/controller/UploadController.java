@@ -103,7 +103,6 @@ public class UploadController {
 
 			switch (xssfRow.getCellType()) {
 				case STRING:
-
 					break;
 				case NUMERIC:
 					System.out.println(cellStyle.getDataFormatString());
