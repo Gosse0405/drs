@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <title>上传文件</title>
+    <link rel="stylesheet" href="layui/css/layui.css"/>
+</head>
+<body>
+
+
+<div class="layui-upload-drag" id="upload-excel">
+    <i class="layui-icon"></i>
+    <p>点击上传，或将文件拖拽到此处</p>
+</div>
+</body>
+<script src="layui/layui.all.js"></script>
+<script src="layui/lay/modules/upload.js"></script>
+<script>
+    var $ = layui.jquery
+        ,upload = layui.upload;
+    //拖拽上传
+    upload.render({
+        elem: '#upload-excel'
+        ,url: 'uploadFile'
+        ,accept:'file'
+        ,exts:'xlsx|xls'
+        ,done: function(res){
+            console.log(res)
+        }
+    });
+</script>
+</html>
