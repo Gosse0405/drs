@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,24 +32,25 @@ public class UploadController {
 
 	@PostMapping("/uploadFile")
 	@ResponseBody
-	public Object uploadFile(@RequestParam("file") MultipartFile file) throws FileNotFoundException {
+	public Object uploadFile(@RequestParam("file") MultipartFile file){
 		Map<String, Object> map = new HashMap<String, Object>();
 
-		// ********************* 文件写入 *********************
-		// 资源路径
-		File resPath = new File(ResourceUtils.getURL("classpath:").getPath());
+		// ********************* 文件写入 start *********************
 		// 上传路径
-		String uploadPath = resPath.getAbsolutePath() + File.separator + "upload";
+		String uploadPath = null;
+		try {
+			uploadPath = ResourceUtils.getURL("classpath:").getPath() + File.separator + "upload";
+		} catch (FileNotFoundException e) {
+			LOGGER.error("上传路径异常：" + e.getMessage());
+		}
 		File upload = new File(uploadPath);
 		if(!upload.exists()) {
 			upload.mkdirs();
 		}
 		// 文件后缀
 		String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
-		// 新文件名随机UUID
-		String fileName = UUID.randomUUID().toString();
 		// 文件路径
-		String filePath = uploadPath + File.separator + fileName + "." + suffix;
+		String filePath = uploadPath + File.separator + UUID.randomUUID().toString() + "." + suffix;
 		File dest = new File(filePath);
 		try {
 			// 像磁盘中写入文件
@@ -59,9 +61,10 @@ public class UploadController {
 		} catch (IOException e) {
 			LOGGER.error("Excel文件上传失败", e.getMessage());
 		}
+		// ********************* 文件写入 end *********************
 
+		// ********************* 读取Excel start *********************
 		if (suffix.equals("xlsx")) {
-			// ********************* 读取Excel *********************
 			XSSFWorkbook xssfWorkbook = null;
 			try {
 				// 构造一个XSSFWorkbook对象，将整个流缓冲到内存中
@@ -77,12 +80,12 @@ public class UploadController {
 					XSSFCell totalAssets = xssfRow.getCell(2);
 					XSSFCell ownerEquity = xssfRow.getCell(3);
 
-					System.out.println(getValue(reportDate));
+					System.out.println(getValue(totalAssets));
 
 					DataReport dataReport = new DataReport(
 //						UUID.randomUUID().toString(),
 
-						);
+					);
 
 				}
 			} catch (IOException e) {
@@ -97,30 +100,32 @@ public class UploadController {
 		return map;
 	}
 
+	/**
+	 * 判断单元格数据类型，并返回对应的值
+	 * @param xssfRow
+	 * @return
+	 */
 	private String getValue(XSSFCell xssfRow) {
-		if (xssfRow != null) {
-			XSSFCellStyle cellStyle = xssfRow.getCellStyle();
+		String resultStr = null;
 
+		if (xssfRow != null) {
 			switch (xssfRow.getCellType()) {
 				case STRING:
+					resultStr = xssfRow.getStringCellValue();
 					break;
 				case NUMERIC:
-					System.out.println(cellStyle.getDataFormatString());
-					System.out.println(xssfRow.getDateCellValue());
-					if("yyyy/mm;@".equals(cellStyle.getDataFormatString()) 
-						|| "m/d/yy".equals(cellStyle.getDataFormatString())
-						|| "yy/m/d".equals(cellStyle.getDataFormatString()) 
-						|| "mm/dd/yy".equals(cellStyle.getDataFormatString())
-						|| "dd-mmm-yy".equals(cellStyle.getDataFormatString())
-						|| "yyyy/m/d".equals(cellStyle.getDataFormatString())
-						|| "yyyy\\-mm\\-dd;@".equals(cellStyle.getDataFormatString())){
-						return new SimpleDateFormat("yyyy-MM-dd").format(xssfRow.getDateCellValue());
+					if("yyyy\\-mm\\-dd;@".equals(xssfRow.getCellStyle().getDataFormatString())){
+						resultStr = new SimpleDateFormat("yyyy-MM-dd").format(xssfRow.getDateCellValue());
+					} else {
+						resultStr = new DecimalFormat("0.00").format(xssfRow.getNumericCellValue());
 					}
+					break;
+				case ERROR:
+					resultStr = xssfRow.getErrorCellString();
+					break;
 			}
-			return "1";
-		} else {
-			return "0";
 		}
+		return resultStr;
 	}
 
 }
