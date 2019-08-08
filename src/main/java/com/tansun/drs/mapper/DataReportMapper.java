@@ -3,9 +3,15 @@ package com.tansun.drs.mapper;
 import com.tansun.drs.entity.DataReport;
 
 public interface DataReportMapper {
-    int deleteByPrimaryKey(String id);
 
-    int insert(DataReport record);
+    /**
+     * 插入数据
+     * @param dataReport
+     * @return
+     */
+    int insert(DataReport dataReport);
+
+    int deleteByPrimaryKey(String id);
 
     int insertSelective(DataReport record);
 

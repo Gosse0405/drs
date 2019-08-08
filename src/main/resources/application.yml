@@ -5,15 +5,13 @@ mybatis:
   config-location: classpath:mybatis/mybatis.cfg.xml        # mybatis配置文件所在路径
   type-aliases-package: com.tansun.drs.entity          # 所有Entity别名类所在包
   mapper-locations: classpath:mybatis/mapper/**/*.xml       # mapper映射文件
-  configuration:
-    map-underscore-to-camel-case: true
 
 spring:
   datasource:
     driver-class-name: oracle.jdbc.driver.OracleDriver
-      url: jdbc:oracle:thin:@localhost:1521:orcl
-      username: tswgs
-      password: tswgs
+    url: jdbc:oracle:thin:@localhost:1521:orcl
+    username: tswgs
+    password: tswgs
 
   thymeleaf:
     mode: HTML   #模板的模式，支持 HTML, XML TEXT JAVASCRIPT

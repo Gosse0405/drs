@@ -10,8 +10,17 @@
         </constructor>
     </resultMap>
     <sql id="Base_Column_List">
-    ID, REPORT_DATE, TOTAL_ASSETS, OWNER_EQUITY
-  </sql>
+        ID, REPORT_DATE, TOTAL_ASSETS, OWNER_EQUITY
+    </sql>
+
+    <insert id="insert" parameterType="com.tansun.drs.entity.DataReport">
+        insert into DATA_REPORT (ID, REPORT_DATE, TOTAL_ASSETS,
+          OWNER_EQUITY)
+        values (#{id,jdbcType=VARCHAR}, #{reportDate,jdbcType=TIMESTAMP}, #{totalAssets,jdbcType=DECIMAL},
+          #{ownerEquity,jdbcType=CHAR})
+    </insert>
+
+
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -22,12 +31,7 @@
     delete from DATA_REPORT
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
-    <insert id="insert" parameterType="com.tansun.drs.entity.DataReport">
-    insert into DATA_REPORT (ID, REPORT_DATE, TOTAL_ASSETS, 
-      OWNER_EQUITY)
-    values (#{id,jdbcType=VARCHAR}, #{reportDate,jdbcType=TIMESTAMP}, #{totalAssets,jdbcType=DECIMAL}, 
-      #{ownerEquity,jdbcType=CHAR})
-  </insert>
+
     <insert id="insertSelective" parameterType="com.tansun.drs.entity.DataReport">
         insert into DATA_REPORT
         <trim prefix="(" suffix=")" suffixOverrides=",">
