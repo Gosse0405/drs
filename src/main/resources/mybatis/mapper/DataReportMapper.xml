@@ -1,8 +1,84 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tansun.drs.mapper.DataReportMapper">
-
-
+    <resultMap id="BaseResultMap" type="com.tansun.drs.entity.DataReport">
+        <constructor>
+            <idArg column="ID" javaType="java.lang.String" jdbcType="VARCHAR"/>
+            <arg column="REPORT_DATE" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+            <arg column="TOTAL_ASSETS" javaType="java.math.BigDecimal" jdbcType="DECIMAL"/>
+            <arg column="OWNER_EQUITY" javaType="java.lang.String" jdbcType="CHAR"/>
+        </constructor>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, REPORT_DATE, TOTAL_ASSETS, OWNER_EQUITY
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from DATA_REPORT
+        where ID = #{id,jdbcType=VARCHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from DATA_REPORT
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+    <insert id="insert" parameterType="com.tansun.drs.entity.DataReport">
+    insert into DATA_REPORT (ID, REPORT_DATE, TOTAL_ASSETS, 
+      OWNER_EQUITY)
+    values (#{id,jdbcType=VARCHAR}, #{reportDate,jdbcType=TIMESTAMP}, #{totalAssets,jdbcType=DECIMAL}, 
+      #{ownerEquity,jdbcType=CHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.tansun.drs.entity.DataReport">
+        insert into DATA_REPORT
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                ID,
+            </if>
+            <if test="reportDate != null">
+                REPORT_DATE,
+            </if>
+            <if test="totalAssets != null">
+                TOTAL_ASSETS,
+            </if>
+            <if test="ownerEquity != null">
+                OWNER_EQUITY,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=VARCHAR},
+            </if>
+            <if test="reportDate != null">
+                #{reportDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="totalAssets != null">
+                #{totalAssets,jdbcType=DECIMAL},
+            </if>
+            <if test="ownerEquity != null">
+                #{ownerEquity,jdbcType=CHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.tansun.drs.entity.DataReport">
+        update DATA_REPORT
+        <set>
+            <if test="reportDate != null">
+                REPORT_DATE = #{reportDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="totalAssets != null">
+                TOTAL_ASSETS = #{totalAssets,jdbcType=DECIMAL},
+            </if>
+            <if test="ownerEquity != null">
+                OWNER_EQUITY = #{ownerEquity,jdbcType=CHAR},
+            </if>
+        </set>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.tansun.drs.entity.DataReport">
+    update DATA_REPORT
+    set REPORT_DATE = #{reportDate,jdbcType=TIMESTAMP},
+      TOTAL_ASSETS = #{totalAssets,jdbcType=DECIMAL},
+      OWNER_EQUITY = #{ownerEquity,jdbcType=CHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
 </mapper>

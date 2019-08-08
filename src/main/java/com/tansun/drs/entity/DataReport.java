@@ -1,23 +1,27 @@
 package com.tansun.drs.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class DataReport implements Serializable {
     private String id;
+
     private Date reportDate;
-    private double totalAssete;
+
+    private BigDecimal totalAssets;
+
     private String ownerEquity;
 
-    public DataReport() {
-
-    }
-
-    public DataReport(String id, Date reportDate, double totalAssete, String ownerEquity) {
+    public DataReport(String id, Date reportDate, BigDecimal totalAssets, String ownerEquity) {
         this.id = id;
         this.reportDate = reportDate;
-        this.totalAssete = totalAssete;
+        this.totalAssets = totalAssets;
         this.ownerEquity = ownerEquity;
+    }
+
+    public DataReport() {
+        super();
     }
 
     public String getId() {
@@ -25,7 +29,7 @@ public class DataReport implements Serializable {
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = id == null ? null : id.trim();
     }
 
     public Date getReportDate() {
@@ -36,12 +40,12 @@ public class DataReport implements Serializable {
         this.reportDate = reportDate;
     }
 
-    public double getTotalAssete() {
-        return totalAssete;
+    public BigDecimal getTotalAssets() {
+        return totalAssets;
     }
 
-    public void setTotalAssete(double totalAssete) {
-        this.totalAssete = totalAssete;
+    public void setTotalAssets(BigDecimal totalAssets) {
+        this.totalAssets = totalAssets;
     }
 
     public String getOwnerEquity() {
@@ -49,6 +53,6 @@ public class DataReport implements Serializable {
     }
 
     public void setOwnerEquity(String ownerEquity) {
-        this.ownerEquity = ownerEquity;
+        this.ownerEquity = ownerEquity == null ? null : ownerEquity.trim();
     }
 }
